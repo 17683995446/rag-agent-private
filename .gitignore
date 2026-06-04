@@ -1,0 +1,29 @@
+# 虚拟环境
+venv/
+
+# Python缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE配置
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 向量库数据
+data/*
+!data/.gitkeep
+chroma_db/*
+!chroma_db/.gitkeep
+
+# 日志文件
+logs/*
+!logs/.gitkeep
+*.log
+
+# 临时文件
+tmp/
+temp/

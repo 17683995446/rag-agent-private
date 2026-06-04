@@ -1,0 +1,16 @@
+# 阶段1：真实嵌入模型集成 - 依赖清单
+# 图难于其易，为大于其细
+
+# 句子嵌入模型
+sentence-transformers>=2.2.0
+
+# PyTorch (CPU版本，轻量级)
+torch>=2.0.0
+torchvision>=0.15.0
+
+# 模型缓存管理
+safetensors>=0.3.0
+
+# 可选：GPU支持 (如需GPU加速，取消下面注释)
+# torch>=2.0.0+cu118
+# torchvision>=0.15.0+cu118

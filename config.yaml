@@ -1,0 +1,37 @@
+# RAG Agent 生产配置文件
+
+# 应用配置
+app:
+  name: "RAG-Agent"
+  version: "2.0.0"
+  debug: false
+
+# 嵌入模型配置
+embedding:
+  model_name: "all-MiniLM-L6-v2"
+  dimension: 384
+  device: "auto"  # auto, cpu, cuda
+  cache_dir: "~/.cache/rag_agent/models"
+
+# 向量数据库配置
+vector_store:
+  type: "chroma"  # memory, chroma
+  collection_name: "rag_documents"
+  persist_dir: "~/.cache/rag_agent/chroma"
+
+# 检索配置
+retrieval:
+  semantic_weight: 0.6
+  keyword_weight: 0.4
+  top_k: 4
+  use_reranker: true
+
+# 文本分片配置
+text_splitter:
+  chunk_size: 500
+  chunk_overlap: 50
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "structured"
