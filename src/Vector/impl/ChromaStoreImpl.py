@@ -60,6 +60,18 @@ class ChromaStoreImpl(IStore):
     def similarity_search(self, query_vector: List[float], top_k: int) -> List[Dict[str, Any]]:
         self._logger.enter_method("ChromaStore", "similarity_search", top_k=top_k)
         try:
+            # 防御性检查：空查询向量
+            if not query_vector or len(query_vector) == 0:
+                self._logger.warning("ChromaStore", "查询向量为空，返回空结果")
+                self._logger.exit_method("ChromaStore", "similarity_search", 0)
+                return []
+
+            # 防御性检查：空集合
+            if self.get_count() == 0:
+                self._logger.warning("ChromaStore", "集合为空，返回空结果")
+                self._logger.exit_method("ChromaStore", "similarity_search", 0)
+                return []
+
             results = self._collection.query(
                 query_embeddings=[query_vector],
                 n_results=top_k

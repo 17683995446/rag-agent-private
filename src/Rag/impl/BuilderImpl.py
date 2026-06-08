@@ -64,7 +64,7 @@ class BuilderImpl(IBuilder):
         self._logger.info("Builder", "开始构建Agent")
         
         if self._agent is None:
-            self.initialize_components()
+            self._ensure_components_initialized()
             self._agent = AgentImpl(
                 self._config, self._splitter, self._document,
                 self._embedding, self._store, self._retriever, 
@@ -72,6 +72,11 @@ class BuilderImpl(IBuilder):
             )
             self._logger.info("Builder", "Agent构建完成")
         return self._agent
+
+    def _ensure_components_initialized(self) -> None:
+        """确保组件只初始化一次"""
+        if self._config is None:
+            self.initialize_components()
 
     def build_agent_advanced(self, 
                             model_name: Optional[str] = None, 

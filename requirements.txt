@@ -5,6 +5,11 @@ sentence-transformers>=2.2.0
 torch>=2.0.0
 chromadb>=0.4.0
 
+# API服务
+fastapi>=0.100.0
+uvicorn>=0.23.0
+httpx>=0.24.0
+
 # 配置管理
 pyyaml>=6.0
 

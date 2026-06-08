@@ -91,8 +91,6 @@ class AgentImpl(IAgent):
             
             # 记录原始状态（用于异常回滚）
             original_doc_count = self._document_count
-            original_vector_count = self._store.get_count()
-            original_bm25_size = self._bm25.get_index_size()
             
             try:
                 metadatas = [{"index": i, "source_doc_index": i} for i in range(len(chunks))]
@@ -112,19 +110,10 @@ class AgentImpl(IAgent):
                 self._logger.exit_method("Agent", "add_documents")
                 
             except Exception as inner_e:
-                # 事务回滚：尝试恢复到原始状态
-                self._logger.error("Agent", "添加文档添加过程异常，尝试回滚", error=str(inner_e))
-                try:
-                    # 尝试回滚
-                    current_vector_count = self._store.get_count()
-                    if current_vector_count > original_vector_count:
-                        self._logger.warning("Agent", "向量存储已部分写入，无法精确回滚")
-                    
-                    self._document_count = original_doc_count
-                    self._logger.warning("Agent", "文档计数已回滚")
-                except Exception as rollback_e:
-                    self._logger.error("Agent", "回滚失败", error=str(rollback_e))
-                
+                # 事务回滚：恢复到原始状态
+                self._logger.error("Agent", "添加过程异常，执行回滚", error=str(inner_e))
+                self._document_count = original_doc_count
+                self._logger.warning("Agent", "文档计数已回滚", restored_count=original_doc_count)
                 raise inner_e
                 
         except Exception as e:

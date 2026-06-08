@@ -48,14 +48,20 @@ class RetrieverImpl(IRetriever):
 
     def set_semantic_weight(self, weight: float) -> None:
         self._logger.debug("Retriever", "设置语义权重", old_weight=self._semantic_weight, new_weight=weight)
-        self._semantic_weight = max(0.0, min(1.0, weight))
-        self._keyword_weight = 1.0 - self._semantic_weight
+        # 原子性更新：同时更新两个权重，确保总和为1
+        new_semantic = max(0.0, min(1.0, weight))
+        new_keyword = 1.0 - new_semantic
+        self._semantic_weight = new_semantic
+        self._keyword_weight = new_keyword
         self._logger.debug("Retriever", "权重已更新", semantic_weight=self._semantic_weight, keyword_weight=self._keyword_weight)
 
     def set_keyword_weight(self, weight: float) -> None:
         self._logger.debug("Retriever", "设置关键词权重", old_weight=self._keyword_weight, new_weight=weight)
-        self._keyword_weight = max(0.0, min(1.0, weight))
-        self._semantic_weight = 1.0 - self._keyword_weight
+        # 原子性更新：同时更新两个权重，确保总和为1
+        new_keyword = max(0.0, min(1.0, weight))
+        new_semantic = 1.0 - new_keyword
+        self._keyword_weight = new_keyword
+        self._semantic_weight = new_semantic
         self._logger.debug("Retriever", "权重已更新", semantic_weight=self._semantic_weight, keyword_weight=self._keyword_weight)
 
     def _semantic_search(self, query: str, top_k: int) -> List[Dict[str, Any]]:

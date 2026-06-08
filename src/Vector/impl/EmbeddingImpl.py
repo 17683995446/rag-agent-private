@@ -18,6 +18,19 @@ class EmbeddingImpl(IEmbedding):
         self._is_available = False
         self._logger = get_logger()
         self._logger.debug("Embedding", "嵌入模型初始化", model_name=self._model_name, available=self._is_available)
+        # 预加载numpy避免运行时重复导入
+        self._numpy = None
+        self._load_numpy()
+
+    def _load_numpy(self) -> bool:
+        """预加载numpy库"""
+        try:
+            import numpy as np
+            self._numpy = np
+            return True
+        except ImportError:
+            self._logger.warning("Embedding", "numpy未安装")
+            return False
 
     def load_model(self, cache_dir: Optional[str] = None) -> bool:
         """
@@ -65,7 +78,6 @@ class EmbeddingImpl(IEmbedding):
 
             if self._is_available and self._model is not None:
                 # 使用真实模型
-                import numpy as np
                 embedding = self._model.encode(text, convert_to_numpy=True)
                 result = embedding.tolist()
                 self._logger.exit_method("Embedding", "embed_text")
@@ -88,7 +100,6 @@ class EmbeddingImpl(IEmbedding):
 
             if self._is_available and self._model is not None:
                 # 使用真实模型批量嵌入
-                import numpy as np
                 embeddings = self._model.encode(texts, convert_to_numpy=True, show_progress_bar=False)
                 results = [emb.tolist() for emb in embeddings]
                 self._logger.exit_method("Embedding", "embed_texts", len(results))
